@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#527849">
+  <meta name="description" content="A shared pixel garden.">
+  <title>The Common Garden</title>
+  <link rel="stylesheet" href="./style.css?v=20261112-unlimited-changes-v51">
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"}}
+  </script>
+</head>
+<body>
+  <main class="garden-app">
+    <section class="garden-world" id="gardenWorld" aria-label="Shared garden map">
+      <canvas id="gardenCanvas" aria-label="A shared garden with grass and a mature pine tree."></canvas>
+    </section>
+    <section class="plant-menu" id="plantMenu" role="dialog" aria-label="Garden item choices" hidden>
+      <div class="plant-options" id="speciesGrid" role="group" aria-label="Plants"></div>
+    </section>
+    <div class="garden-toolbar" role="group" aria-label="Garden tools">
+      <button class="add-toggle" id="addToggle" type="button" aria-label="Add to garden" aria-expanded="false" aria-controls="plantMenu">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
+      <button class="grid-toggle" id="gridToggle" type="button" aria-label="Show grid" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="3.5" y="3.5" width="17" height="17" rx="1.5"></rect>
+          <path d="M9.17 3.5v17M14.83 3.5v17M3.5 9.17h17M3.5 14.83h17"></path>
+        </svg>
+      </button>
+      <button class="reset-toggle" id="resetToggle" type="button" aria-label="Reset garden" title="Reset garden">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 8.2A8 8 0 1 1 4 13M4.5 4.5v3.8h3.8"></path></svg>
+      </button>
+      <div class="user-control">
+        <button class="user-icon" id="userToggle" type="button" aria-label="User profile" aria-expanded="false" aria-controls="profilePanel">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.3"></circle><path d="M5.5 20c.4-3.5 2.7-5.4 6.5-5.4s6.1 1.9 6.5 5.4"></path></svg>
+        </button>
+        <span class="change-allowance" id="changeAllowance" role="status" aria-live="off" tabindex="0" aria-label="Hourly garden changes remaining">15</span>
+      </div>
+    </div>
+    <section class="profile-panel" id="profilePanel" aria-label="Your garden profile" hidden>
+      <label for="profileName">Your garden name</label>
+      <p>Your name will appear on the things you add.</p>
+      <div class="profile-edit-row">
+        <input id="profileName" type="text" maxlength="32" autocomplete="nickname">
+        <button id="saveProfileName" type="button">Save</button>
+      </div>
+      <div class="profile-limit-setting">
+        <label class="profile-limit-label" for="unlimitedChanges">Change limit</label>
+        <label class="profile-limit-toggle"><input id="unlimitedChanges" type="checkbox"><span>Unlimited garden changes</span></label>
+        <p>Disable the 15-per-hour cap for this browser. Basic spam protection stays on.</p>
+        <span class="profile-limit-status" id="changeLimitStatus" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+    <section class="item-attribution" id="itemAttribution" aria-live="polite" hidden>
+      <strong id="attributionTitle"></strong>
+      <span id="attributionAuthor"></span>
+      <time id="attributionDate"></time>
+      <span class="item-growth-status" id="attributionGrowth" role="status" aria-live="off" hidden></span>
+      <button type="button" id="growItem" class="grow-item-button" hidden>Grow to next stage</button>
+      <span class="item-lock-status" id="attributionLock" role="status" aria-live="off" hidden></span>
+      <span class="attribution-hint" id="attributionHint" hidden></span>
+      <div class="item-actions" id="itemActions" role="group" aria-label="Selected item actions">
+        <button type="button" id="moveItem" class="item-action" aria-label="Move item" data-help="Move this item to another square" data-tooltip="Move this item to another square">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18M12 3l-3 3m3-3 3 3M21 12l-3-3m3 3-3 3M12 21l-3-3m3 3 3-3M3 12l3-3m-3 3 3 3"></path></svg>
+        </button>
+        <button type="button" id="bulldozeItem" class="item-action" aria-label="Remove item" data-help="Remove this item from the garden" data-tooltip="Remove this item from the garden">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9 7V4.5h6V7m-8.5 0 1 13h9l1-13M10 10.5v6m4-6v6"></path></svg>
+        </button>
+        <button type="button" id="rotateItem" class="item-action" aria-label="Rotate item" data-help="Rotate this item 90 degrees" data-tooltip="Rotate this item 90 degrees" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4.8 9a7.5 7.5 0 0 1 12.7-2L20 12M4 17v-5h5m10.2 3a7.5 7.5 0 0 1-12.7 2L4 12"></path></svg>
+        </button>
+      </div>
+    </section>
+    <div class="path-cursor" id="pathCursor" aria-hidden="true" hidden>
+      <img id="pathCursorImage" alt="" draggable="false">
+    </div>
+    <div class="placement-toolkit" id="placementToolkit" role="toolbar" aria-label="Placement controls" hidden>
+      <button class="toolkit-action" id="toolkitBack" type="button" aria-label="Return to item choices"><kbd>Esc</kbd><span>or right-click · Return</span></button>
+      <button class="toolkit-action" id="toolkitRotate" type="button" aria-label="Rotate item" hidden><kbd>R</kbd><span>Rotate</span></button>
+      <div class="toolkit-shortcut" id="toolkitRepeat" hidden><kbd>Shift</kbd><span>Keep selected</span></div>
+      <span class="toolkit-hint" id="toolkitHint"></span>
+    </div>
+    <div class="item-hover-tag" id="itemHoverTag" role="tooltip" hidden></div>
+  </main>
+  <script type="module" src="./garden.js?v=20261112-plant-sprite-audit-v54"></script>
+</body>
+</html>

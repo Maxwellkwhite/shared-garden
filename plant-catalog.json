@@ -1,0 +1,151 @@
+[
+  {
+    "id": "flowers",
+    "label": "Flowers",
+    "plants": [
+      {"id":"sunflower","label":"Sunflower","kind":"flower"},
+      {"id":"tulip","label":"Tulip","kind":"flower"},
+      {"id":"rose","label":"Rose","kind":"flower"},
+      {"id":"daisy","label":"Daisy","kind":"flower"},
+      {"id":"lavender","label":"Lavender","kind":"flower"},
+      {"id":"hydrangea","label":"Hydrangea","kind":"flower"},
+      {"id":"marigold","label":"Marigold","kind":"flower"},
+      {"id":"bluebell","label":"Bluebell","kind":"flower"},
+      {"id":"peony","label":"Peony","kind":"flower"},
+      {"id":"poppy","label":"Poppy","kind":"flower"}
+    ]
+  },
+  {
+    "id": "trees",
+    "label": "Trees",
+    "plants": [
+      {"id":"oak-tree","label":"Oak Tree","kind":"tree"},
+      {"id":"pine-tree","label":"Pine Tree","kind":"pine"},
+      {"id":"cherry-blossom-tree","label":"Cherry Blossom Tree","kind":"tree"},
+      {"id":"weeping-willow","label":"Weeping Willow","kind":"willow"},
+      {"id":"apple-tree","label":"Apple Tree","kind":"tree"},
+      {"id":"maple-tree","label":"Maple Tree","kind":"tree"},
+      {"id":"birch-tree","label":"Birch Tree","kind":"tree"}
+    ]
+  },
+  {
+    "id": "shrubs",
+    "label": "Bushes & Shrubs",
+    "plants": [
+      {"id":"azalea","label":"Azalea","kind":"shrub"},
+      {"id":"boxwood","label":"Boxwood","kind":"shrub"},
+      {"id":"holly-bush","label":"Holly Bush","kind":"shrub"},
+      {"id":"rhododendron","label":"Rhododendron","kind":"shrub"}
+    ]
+  },
+  {
+    "id": "ground-cover",
+    "label": "Ferns & Ground Cover",
+    "plants": [
+      {"id":"boston-fern","label":"Boston Fern","kind":"fern"},
+      {"id":"clover","label":"Clover","kind":"groundcover"},
+      {"id":"english-ivy","label":"English Ivy","kind":"vine"}
+    ]
+  },
+  {
+    "id": "tropical-desert",
+    "label": "Tropical & Desert Plants",
+    "plants": [
+      {"id":"cactus","label":"Cactus","kind":"cactus"},
+      {"id":"palm-tree","label":"Palm Tree","kind":"palm"},
+      {"id":"monstera","label":"Monstera","kind":"monstera"}
+    ]
+  },
+  {
+    "id": "mushrooms",
+    "label": "Mushrooms",
+    "plants": [
+      {"id":"fly-agaric-mushroom","label":"Fly Agaric Mushroom","kind":"mushroom"},
+      {"id":"chanterelle-mushroom","label":"Chanterelle Mushroom","kind":"mushroom"}
+    ]
+  },
+  {
+    "id": "vegetables",
+    "label": "Vegetables",
+    "plants": [
+      {"id":"carrot","label":"Carrot","kind":"vegetable"},
+      {"id":"tomato","label":"Tomato","kind":"vegetable"},
+      {"id":"pumpkin","label":"Pumpkin","kind":"vegetable"},
+      {"id":"lettuce","label":"Lettuce","kind":"vegetable"},
+      {"id":"corn","label":"Corn","kind":"vegetable"}
+    ]
+  },
+  {
+    "id": "fruits",
+    "label": "Fruits",
+    "plants": [
+      {"id":"strawberry","label":"Strawberry","kind":"fruit"},
+      {"id":"watermelon","label":"Watermelon","kind":"fruit"},
+      {"id":"blueberry-bush","label":"Blueberry Bush","kind":"shrub"},
+      {"id":"raspberry-bush","label":"Raspberry Bush","kind":"shrub"},
+      {"id":"pineapple","label":"Pineapple","kind":"fruit"}
+    ]
+  },
+  {
+    "id": "paths-ground",
+    "label": "Paths & Ground",
+    "plants": [],
+    "objects": [
+      {"id":"stone-path","label":"Stone Path","kind":"path","footprint":[1,1],"connect":"path"},
+      {"id":"gravel-path","label":"Gravel Path","kind":"path","footprint":[1,1],"connect":"path"},
+      {"id":"dirt-path","label":"Dirt Path","kind":"path","footprint":[1,1],"connect":"path"},
+      {"id":"cobblestone-path","label":"Cobblestone Path","kind":"path","footprint":[1,1],"connect":"path"},
+      {"id":"stepping-stones","label":"Stepping Stones","kind":"path","footprint":[1,1],"connect":"path"}
+    ]
+  },
+  {
+    "id": "ground-textures",
+    "label": "Ground Texture Blocks",
+    "plants": [],
+    "objects": [
+      {"id":"ground-dirt","label":"Dirt","kind":"ground","groundMaterial":"dirt","footprint":[1,1]},
+      {"id":"ground-sand","label":"Sand","kind":"ground","groundMaterial":"sand","footprint":[1,1]},
+      {"id":"ground-mulch","label":"Mulch","kind":"ground","groundMaterial":"mulch","footprint":[1,1]},
+      {"id":"ground-pea-gravel","label":"Pea Gravel","kind":"ground","groundMaterial":"pea_gravel","footprint":[1,1]},
+      {"id":"ground-river-rocks","label":"River Rocks","kind":"ground","groundMaterial":"river_rocks","footprint":[1,1]},
+      {"id":"ground-wood-chips","label":"Wood Chips","kind":"ground","groundMaterial":"wood_chips","footprint":[1,1]},
+      {"id":"ground-pine-straw","label":"Pine Straw","kind":"ground","groundMaterial":"pine_straw","footprint":[1,1]}
+    ]
+  },
+  {
+    "id": "rocks-natural",
+    "label": "Rocks & Natural Features",
+    "plants": [],
+    "objects": [
+      {"id":"small-rock","label":"Small Rock","kind":"natural","footprint":[1,1],"randomRotation":true},
+      {"id":"large-boulder","label":"Large Boulder","kind":"natural","footprint":[2,2],"randomRotation":true},
+      {"id":"mossy-rock","label":"Mossy Rock","kind":"natural","footprint":[1,1],"randomRotation":true},
+      {"id":"fallen-log","label":"Fallen Log","kind":"natural","footprint":[2,1],"randomRotation":true,"comingSoon":true},
+      {"id":"tree-stump","label":"Tree Stump","kind":"natural","footprint":[1,1],"randomRotation":true,"comingSoon":true}
+    ]
+  },
+  {
+    "id": "structures",
+    "label": "Garden Structures",
+    "plants": [],
+    "objects": [
+      {"id":"wooden-bench","label":"Wooden Bench","kind":"structure","footprint":[2,1],"rotatable":true,"comingSoon":true},
+      {"id":"wooden-fence","label":"Wooden Fence","kind":"fence","footprint":[1,1],"rotatable":true,"connect":"fence","comingSoon":true},
+      {"id":"stone-wall","label":"Stone Wall","kind":"wall","footprint":[1,1],"rotatable":true,"connect":"wall","comingSoon":true},
+      {"id":"wooden-archway","label":"Wooden Archway","kind":"structure","footprint":[2,2],"rotatable":true,"comingSoon":true},
+      {"id":"trellis","label":"Trellis","kind":"structure","footprint":[1,2],"rotatable":true,"comingSoon":true}
+    ]
+  },
+  {
+    "id": "ornaments",
+    "label": "Garden Ornaments & Accessories",
+    "plants": [],
+    "objects": [
+      {"id":"birdbath","label":"Birdbath","kind":"ornament","footprint":[1,1],"comingSoon":true},
+      {"id":"birdhouse","label":"Birdhouse","kind":"ornament","footprint":[1,2],"comingSoon":true},
+      {"id":"water-fountain","label":"Water Fountain","kind":"ornament","footprint":[2,2],"comingSoon":true},
+      {"id":"garden-lantern","label":"Garden Lantern","kind":"ornament","footprint":[1,1],"comingSoon":true},
+      {"id":"flower-pot","label":"Flower Pot","kind":"ornament","footprint":[1,1],"comingSoon":true}
+    ]
+  }
+]

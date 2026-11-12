@@ -1,0 +1,32 @@
+{
+  "id": "central_botanical_garden",
+  "version": 1,
+  "name": "Central Botanical Garden",
+  "world_size": 50,
+  "origin": {"x": 20, "y": 20},
+  "rows": [
+    "C..L..S..O",
+    ".RRL..SS..",
+    ".RRL..DS..",
+    "..L....D..",
+    "..........",
+    "..........",
+    "..TT..MM..",
+    ".TBB..HH..",
+    ".TBB..HH..",
+    "M..P..C..P"
+  ],
+  "legend": {
+    "C": "cherry-blossom-tree",
+    "O": "oak-tree",
+    "M": "maple-tree",
+    "P": "pine-tree",
+    "R": "rose",
+    "L": "lavender",
+    "S": "sunflower",
+    "D": "daisy",
+    "T": "tulip",
+    "B": "bluebell",
+    "H": "hydrangea"
+  }
+}
