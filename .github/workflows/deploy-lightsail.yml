@@ -1,0 +1,25 @@
+name: Deploy Common Garden
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lightsail-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, lightsail]
+    steps:
+      - name: Update the app and restart the service
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C /opt/common-garden pull --ff-only origin main
+          sudo -n /usr/bin/systemctl restart common-garden
+          systemctl is-active --quiet common-garden

@@ -29,9 +29,6 @@
           <path d="M9.17 3.5v17M14.83 3.5v17M3.5 9.17h17M3.5 14.83h17"></path>
         </svg>
       </button>
-      <button class="reset-toggle" id="resetToggle" type="button" aria-label="Reset garden" title="Reset garden">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 8.2A8 8 0 1 1 4 13M4.5 4.5v3.8h3.8"></path></svg>
-      </button>
       <div class="user-control">
         <button class="user-icon" id="userToggle" type="button" aria-label="User profile" aria-expanded="false" aria-controls="profilePanel">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="3.3"></circle><path d="M5.5 20c.4-3.5 2.7-5.4 6.5-5.4s6.1 1.9 6.5 5.4"></path></svg>
@@ -58,7 +55,6 @@
       <span id="attributionAuthor"></span>
       <time id="attributionDate"></time>
       <span class="item-growth-status" id="attributionGrowth" role="status" aria-live="off" hidden></span>
-      <button type="button" id="growItem" class="grow-item-button" hidden>Grow to next stage</button>
       <span class="item-lock-status" id="attributionLock" role="status" aria-live="off" hidden></span>
       <span class="attribution-hint" id="attributionHint" hidden></span>
       <div class="item-actions" id="itemActions" role="group" aria-label="Selected item actions">
@@ -84,6 +80,6 @@
     </div>
     <div class="item-hover-tag" id="itemHoverTag" role="tooltip" hidden></div>
   </main>
-  <script type="module" src="./garden.js?v=20261112-plant-sprite-audit-v54"></script>
+  <script type="module" src="./garden.js?v=20261114-remove-growth-button"></script>
 </body>
 </html>

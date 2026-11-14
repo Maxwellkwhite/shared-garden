@@ -9,7 +9,6 @@ const canvas = document.querySelector('#gardenCanvas');
 const worldElement = document.querySelector('#gardenWorld');
 const gridToggle = document.querySelector('#gridToggle');
 const addToggle = document.querySelector('#addToggle');
-const resetToggle = document.querySelector('#resetToggle');
 const plantMenu = document.querySelector('#plantMenu');
 const speciesGrid = document.querySelector('#speciesGrid');
 const plantCatalog = await fetch('./plant-catalog.json').then(response => response.json());
@@ -81,7 +80,6 @@ const attributionTitle = document.querySelector('#attributionTitle');
 const attributionAuthor = document.querySelector('#attributionAuthor');
 const attributionDate = document.querySelector('#attributionDate');
 const attributionGrowth = document.querySelector('#attributionGrowth');
-const growItemButton = document.querySelector('#growItem');
 const attributionLock = document.querySelector('#attributionLock');
 const attributionHint = document.querySelector('#attributionHint');
 const moveItemButton = document.querySelector('#moveItem');
@@ -160,7 +158,6 @@ let inspectedItem = null;
 let movingItem = null;
 let movingPointerId = null;
 let lockCountdownTimer = null;
-let growActionPending = false;
 let hoverCell = null;
 let terrainOriginX = 0;
 let terrainOriginY = 0;
@@ -319,34 +316,6 @@ gridToggle.addEventListener('click', () => {
   worldGrid.visible = !worldGrid.visible;
   gridToggle.setAttribute('aria-pressed', String(worldGrid.visible));
   gridToggle.setAttribute('aria-label', worldGrid.visible ? 'Hide grid' : 'Show grid');
-});
-
-resetToggle.addEventListener('click', async () => {
-  if (!window.confirm('Reset the shared garden and everyone’s hourly allowance? This clears all placed items and returns everyone to 15/15.')) return;
-  resetToggle.disabled = true;
-  try {
-    const response = await fetch('/api/reset', {
-      method: 'POST',
-      headers: { 'X-Visitor-Id': visitorId },
-    });
-    const result = await response.json();
-    updateChangeAllowance(result.change_allowance);
-    if (!response.ok) throw new Error(apiErrorMessage(result, 'Could not reset the garden'));
-    revision = result.revision;
-    renderTrees([]);
-    groundTiles = [];
-    groundLayer.setTiles(groundTiles);
-    target.set(0, 0, 0);
-    zoom = 1;
-    updateCamera();
-    resetToggle.title = 'Garden and everyone’s hourly allowance reset';
-  } catch (error) {
-    resetToggle.title = `Reset failed: ${error.message}`;
-    console.warn('Garden reset failed:', error.message);
-  } finally {
-    resetToggle.disabled = false;
-    window.setTimeout(() => { resetToggle.title = 'Reset garden'; }, 5000);
-  }
 });
 
 function setPlantMenuOpen(open) {
@@ -822,9 +791,6 @@ function updateItemActionLock() {
     }
     const nextGrowthAt = Number(item?.next_growth_at || 0);
     const growing = inspectedItem?.kind === 'plant' && nextGrowthAt > 0;
-    const canFastForward = inspectedItem?.kind === 'plant' && !/_mature$/.test(item?.species || '');
-    growItemButton.hidden = !canFastForward;
-    growItemButton.disabled = growActionPending;
     if (growing) {
       const growthRemaining = Math.max(0, Math.ceil(nextGrowthAt - Date.now() / 1000));
       attributionGrowth.textContent = `Next stage in ${formatGrowthCountdown(growthRemaining)}`;
@@ -960,11 +926,6 @@ function moveDestinationOccupied(cell, selection) {
 async function performInspectedAction(action, destination = null, position = null) {
   const selection = action === 'move' && destination ? movingItem : inspectedItem;
   if (!selection) return;
-  if (action === 'grow') {
-    if (selection.kind !== 'plant' || growItemButton.disabled) return;
-    growActionPending = true;
-    growItemButton.disabled = true;
-  }
   if (action === 'move' && !destination) {
     beginMovingItem();
     return;
@@ -994,7 +955,6 @@ async function performInspectedAction(action, destination = null, position = nul
       }
       throw new Error(apiErrorMessage(result, 'Could not update this item'));
     }
-    if (action === 'grow') growActionPending = false;
     revision = result.revision;
     if (action === 'move') movingItem = null;
     if (selection.kind === 'ground') {
@@ -1017,10 +977,6 @@ async function performInspectedAction(action, destination = null, position = nul
     else dismissItemAttribution();
   } catch (error) {
     if (/claimed|occupied/i.test(error.message)) await refreshGardenState();
-    if (action === 'grow') {
-      growActionPending = false;
-      growItemButton.disabled = false;
-    }
     if (movingItem) {
       toolkitHint.textContent = error.message;
       toolkitHint.hidden = false;
@@ -1035,7 +991,6 @@ async function performInspectedAction(action, destination = null, position = nul
 moveItemButton.addEventListener('click', () => void performInspectedAction('move'));
 bulldozeItemButton.addEventListener('click', () => void performInspectedAction('bulldoze'));
 rotateItemButton.addEventListener('click', () => void performInspectedAction('rotate'));
-growItemButton.addEventListener('click', () => void performInspectedAction('grow'));
 
 function inspectAtClientPoint(clientX, clientY) {
   const rect = canvas.getBoundingClientRect();

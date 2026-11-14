@@ -1,0 +1,30 @@
+{
+  "id": "central_flower_showcase",
+  "version": 1,
+  "name": "Central Flower Showcase",
+  "world_size": 50,
+  "origin": {"x": 20, "y": 20},
+  "rows": [
+    "..S....S..",
+    ".T..M..T..",
+    "R.L.DD.L.R",
+    "MMT....TMM",
+    "LBH.PP.HBL",
+    "LBH.PP.HBL",
+    "MMT....TMM",
+    "R.L.DD.L.R",
+    ".T..M..T..",
+    "..S....S.."
+  ],
+  "legend": {
+    "S": "sunflower",
+    "T": "tulip",
+    "M": "marigold",
+    "R": "rose",
+    "L": "lavender",
+    "D": "daisy",
+    "B": "bluebell",
+    "H": "hydrangea",
+    "P": "peony"
+  }
+}

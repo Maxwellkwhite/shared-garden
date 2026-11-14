@@ -9,14 +9,14 @@ body{overscroll-behavior:none}
 .garden-world.moving-item{cursor:crosshair}
 .garden-toolbar{position:fixed;z-index:3;left:16px;bottom:16px;display:flex;align-items:center;gap:8px}
 .user-control{position:relative;flex:0 0 46px;width:46px;height:46px}
-.grid-toggle,.add-toggle,.reset-toggle,.user-icon{width:46px;height:46px;display:grid;place-items:center;padding:0;border:1px solid rgba(221,239,206,.3);border-radius:12px;background:rgba(31,61,37,.9);color:#d6e8c9;box-shadow:0 3px 12px rgba(14,34,20,.28);cursor:pointer;touch-action:manipulation}
+.grid-toggle,.add-toggle,.user-icon{width:46px;height:46px;display:grid;place-items:center;padding:0;border:1px solid rgba(221,239,206,.3);border-radius:12px;background:rgba(31,61,37,.9);color:#d6e8c9;box-shadow:0 3px 12px rgba(14,34,20,.28);cursor:pointer;touch-action:manipulation}
 .add-toggle{width:46px;display:grid;place-items:center;padding:0}
-.add-toggle svg,.reset-toggle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.add-toggle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .add-toggle[aria-expanded="true"]{background:#a7ce93;color:#19351e;border-color:#d9edca}
 .add-toggle.path-brush-active{background:#a7ce93;color:#19351e;border-color:#d9edca;box-shadow:0 0 0 2px rgba(167,206,147,.24)}
-.grid-toggle:hover,.reset-toggle:hover{background:rgba(39,76,44,.96);border-color:rgba(221,239,206,.55)}
+.grid-toggle:hover{background:rgba(39,76,44,.96);border-color:rgba(221,239,206,.55)}
 .add-toggle:hover{border-color:rgba(221,239,206,.55)}
-.grid-toggle:focus-visible,.reset-toggle:focus-visible{outline:2px solid #c6dda9;outline-offset:3px}
+.grid-toggle:focus-visible{outline:2px solid #c6dda9;outline-offset:3px}
 .add-toggle:focus-visible,.plant-choice:focus-visible{outline:2px solid #c6dda9;outline-offset:3px}
 .grid-toggle[aria-pressed="true"]{background:rgba(129,166,95,.96);color:#142a17;border-color:#d1e5b8}
 .grid-toggle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;shape-rendering:crispEdges}
@@ -50,10 +50,6 @@ body{overscroll-behavior:none}
 .item-lock-status[hidden]{display:none}
 .item-growth-status{color:#b9d99e;font-size:11px;font-variant-numeric:tabular-nums}
 .item-growth-status[hidden]{display:none}
-.grow-item-button{justify-self:start;padding:5px 8px;border:1px solid rgba(185,217,158,.4);border-radius:6px;background:rgba(185,217,158,.12);color:#d6e8c9;font:600 11px/1.2 system-ui,sans-serif;cursor:pointer}
-.grow-item-button[hidden]{display:none}
-.grow-item-button:hover{background:rgba(185,217,158,.22)}
-.grow-item-button:disabled{opacity:.5;cursor:wait}
 .attribution-hint{color:#c7dfae;font-size:11px}
 .attribution-hint[hidden],.item-action[hidden]{display:none}
 .item-actions{display:flex;gap:7px;padding-top:5px}
@@ -94,11 +90,10 @@ body{overscroll-behavior:none}
 .item-hover-tag{position:fixed;z-index:12;left:0;top:0;max-width:min(240px,calc(100vw - 16px));padding:6px 9px;border:1px solid rgba(221,239,206,.42);border-radius:7px;background:rgba(25,48,30,.98);color:#edf2e5;box-shadow:0 4px 14px rgba(10,24,13,.34);font:600 12px/1.2 system-ui,sans-serif;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;will-change:transform}
 .item-hover-tag[hidden]{display:none}
 
-.reset-toggle:disabled{opacity:.55;cursor:wait}
 
 @media (max-width: 640px), (pointer: coarse) {
   .garden-toolbar{left:max(12px,env(safe-area-inset-left));bottom:calc(env(safe-area-inset-bottom,0px) + 12px);gap:8px}
-  .grid-toggle,.add-toggle,.reset-toggle,.user-icon{width:50px;height:50px;border-radius:14px}
+  .grid-toggle,.add-toggle,.user-icon{width:50px;height:50px;border-radius:14px}
   .user-control{flex-basis:50px;width:50px;height:50px}
   .plant-menu{left:max(12px,env(safe-area-inset-left));bottom:calc(env(safe-area-inset-bottom,0px) + 72px);width:calc(100vw - 24px);max-height:min(62dvh,560px);padding:9px;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .plant-options{grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}

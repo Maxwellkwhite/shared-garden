@@ -1,0 +1,67 @@
+{
+  "id": "central_garden_expansion",
+  "version": 1,
+  "name": "Central Garden Expansion",
+  "world_size": 50,
+  "extent": 20,
+  "origin": {
+    "x": 15,
+    "y": 15
+  },
+  "path_rows": [
+    ".........SS.........",
+    ".........SS.........",
+    "..PPPPPPPPPPPPPPPP..",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "SSP..............PSS",
+    "SSP..............PSS",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "..P..............P..",
+    "..PPPPPPPPPPPPPPPP..",
+    ".........SS.........",
+    ".........SS........."
+  ],
+  "path_legend": {
+    "P": "stone-path",
+    "S": "stepping-stones"
+  },
+  "ground_rows": [
+    ".........gg.........",
+    ".........gg.........",
+    "..gggggggggggggggg..",
+    "..gwwpppsssspppwwg..",
+    "..gwwpppsssspppwwg..",
+    "..gww..mmmmmm..wwg..",
+    "..gww.mmmmmmmm.wwg..",
+    "..gwwmmmmmmmmmmwwg..",
+    "..grrmmmmmmmmmmrrg..",
+    "gggrrmmmmmmmmmmrrggg",
+    "gggrrmmmmmmmmmmrrggg",
+    "..grrmmmmmmmmmmrrg..",
+    "..gwwmmmmmmmmmmwwg..",
+    "..gww.mmmmmmmm.wwg..",
+    "..gww..mmmmmm..wwg..",
+    "..gwwpppsssspppwwg..",
+    "..gwwpppsssspppwwg..",
+    "..gggggggggggggggg..",
+    ".........gg.........",
+    ".........gg........."
+  ],
+  "ground_legend": {
+    "g": "pea_gravel",
+    "m": "mulch",
+    "w": "wood_chips",
+    "p": "pine_straw",
+    "s": "sand",
+    "r": "river_rocks"
+  }
+}
