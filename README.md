@@ -26,5 +26,6 @@ node --test terrain-core.test.mjs
 ```
 
 The server stores anonymous visitor presence and shared garden state in the ignored
-`data/garden.sqlite3` file by default. Set `GARDEN_DB` to use another path. Live deploys
-import the QA database once, then keep the persistent database across later code releases.
+`data/garden.sqlite3` file by default. Set `GARDEN_DB` to use another path. Production
+releases are applied manually on Lightsail with `deploy-lightsail.sh`. That script imports
+the QA database once and keeps it across later code releases.
