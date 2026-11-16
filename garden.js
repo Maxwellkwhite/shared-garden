@@ -25,6 +25,7 @@ const toolkitRepeat = document.querySelector('#toolkitRepeat');
 const toolkitHint = document.querySelector('#toolkitHint');
 const itemHoverTag = document.querySelector('#itemHoverTag');
 const plantPreviewTimers = new WeakMap();
+let speciesGridRendered = false;
 const PLANT_PREVIEW_STAGES = ['seedling', 'young', 'growing', 'mature'];
 const PLANT_SPRITE_REVISION = '20261112-plant-sprite-audit-v1';
 // Some generated crop PNGs include slivers of neighboring artwork outside
@@ -322,8 +323,12 @@ gridToggle.addEventListener('click', () => {
 });
 
 function setPlantMenuOpen(open) {
+  if (open && !speciesGridRendered) showSpecies();
   plantMenu.hidden = !open;
-  if (!open) itemHoverTag.hidden = true;
+  if (!open) {
+    itemHoverTag.hidden = true;
+    speciesGrid.querySelectorAll('button.plant-choice').forEach(stopPlantStagePreview);
+  }
   addToggle.setAttribute('aria-expanded', String(open));
 }
 
@@ -476,6 +481,7 @@ function showSpecies() {
     button.append(image);
     speciesGrid.append(button);
   }
+  speciesGridRendered = true;
 }
 
 function selectItem(species, choice) {
@@ -558,7 +564,6 @@ function goBackToPicker() {
   placementToolkit.hidden = true;
   placementToolkit.classList.remove('mobile-docked');
   dropPreview.visible = false;
-  showSpecies();
   setPlantMenuOpen(true);
 }
 
@@ -578,8 +583,6 @@ function rotateSelectedItem() {
 
 toolkitBack.addEventListener('click', () => movingItem ? cancelMovingItem() : goBackToPicker());
 toolkitRotate.addEventListener('click', rotateSelectedItem);
-
-showSpecies();
 
 addToggle.addEventListener('click', () => setPlantMenuOpen(plantMenu.hidden));
 document.addEventListener('pointerdown', event => {
