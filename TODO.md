@@ -4,7 +4,6 @@ Use this file to track work for the shared garden prototype.
 
 ## To do
 
-- slow loading of images
 - faster growth
 - tutorial
 - guides and help
