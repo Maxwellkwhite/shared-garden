@@ -4,7 +4,11 @@ Use this file to track work for the shared garden prototype.
 
 ## To do
 
-- New hosting setup
+- expansion past 50x50
+- mobile is horrible
+- slow loading of images
+- tutorial
+- guides and help
 - cozy music
 - fix objects
 - Avatars	Visitors walk around as characters

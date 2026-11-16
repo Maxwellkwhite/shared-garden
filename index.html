@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#527849">
   <meta name="description" content="A shared pixel garden.">
   <title>The Common Garden</title>
+  <script async src="https://www.rilld.com/static/js/tracker.js?v=16" data-site-key="rKyZ8X_Hsom-ZXEPzQKg2sceu1lATpZo"></script>
   <link rel="stylesheet" href="./style.css?v=20261112-unlimited-changes-v51">
   <script type="importmap">
     {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"}}
@@ -73,13 +74,13 @@
       <img id="pathCursorImage" alt="" draggable="false">
     </div>
     <div class="placement-toolkit" id="placementToolkit" role="toolbar" aria-label="Placement controls" hidden>
-      <button class="toolkit-action" id="toolkitBack" type="button" aria-label="Return to item choices"><kbd>Esc</kbd><span>or right-click · Return</span></button>
+      <button class="toolkit-action toolkit-return" id="toolkitBack" type="button" aria-label="Return to item choices"><kbd>Esc</kbd><span class="toolkit-return-desktop">or right-click · Return</span><span class="toolkit-return-mobile">← Return to items</span></button>
       <button class="toolkit-action" id="toolkitRotate" type="button" aria-label="Rotate item" hidden><kbd>R</kbd><span>Rotate</span></button>
       <div class="toolkit-shortcut" id="toolkitRepeat" hidden><kbd>Shift</kbd><span>Keep selected</span></div>
       <span class="toolkit-hint" id="toolkitHint"></span>
     </div>
     <div class="item-hover-tag" id="itemHoverTag" role="tooltip" hidden></div>
   </main>
-  <script type="module" src="./garden.js?v=20261114-remove-growth-button"></script>
+  <script type="module" src="./garden.js?v=20261116-mobile-return"></script>
 </body>
 </html>

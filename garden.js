@@ -154,6 +154,9 @@ let groundTiles = [];
 let selectedItem = null;
 let shiftHeld = false;
 let placementPointerId = null;
+const activeTouchPointers = new Map();
+let pinchGestureActive = false;
+let pinchGestureDistance = 0;
 let inspectedItem = null;
 let movingItem = null;
 let movingPointerId = null;
@@ -493,6 +496,7 @@ function selectItem(species, choice) {
   worldElement.classList.add('path-mode');
   pathCursor.hidden = true;
   placementToolkit.hidden = true;
+  placementToolkit.classList.toggle('mobile-docked', isTouchLayout());
   dropPreview.visible = false;
   if (selectedItem.isGround) pathCursorImage.src = groundTexturePreview(selectedItem.groundMaterial);
   else setPlantImage(pathCursorImage, species);
@@ -500,6 +504,11 @@ function selectItem(species, choice) {
   const label = definition?.label || plantById.get(species.slice(0, species.lastIndexOf('_')))?.label || species.replaceAll('_', ' ');
   addToggle.setAttribute('aria-label', `Selected ${label}; click a garden cell to place`);
   addToggle.title = `Selected ${label}. Click a garden cell to place; click + to change selection.`;
+  if (isTouchLayout()) updatePlacementToolkit(0, 0);
+}
+
+function isTouchLayout() {
+  return navigator.maxTouchPoints > 0 || window.matchMedia('(max-width: 640px), (pointer: coarse)').matches;
 }
 
 function sizeCursorSprite(species) {
@@ -513,7 +522,9 @@ function sizeCursorSprite(species) {
 }
 
 function updatePlacementToolkit(clientX, clientY) {
-  if (!selectedItem || pathCursor.hidden) {
+  const mobileDocked = Boolean(selectedItem && isTouchLayout());
+  placementToolkit.classList.toggle('mobile-docked', mobileDocked);
+  if (!selectedItem || (pathCursor.hidden && !mobileDocked)) {
     placementToolkit.hidden = true;
     return;
   }
@@ -525,6 +536,7 @@ function updatePlacementToolkit(clientX, clientY) {
   toolkitHint.hidden = !supportsDrawing && !movingExisting;
   toolkitHint.textContent = movingExisting ? 'Click to place' : supportsDrawing ? 'Drag - Draw many' : '';
   placementToolkit.hidden = false;
+  if (mobileDocked) return;
   const spriteHalf = pathCursor.offsetWidth / 2;
   const panel = placementToolkit.getBoundingClientRect();
   const right = clientX + spriteHalf + 12;
@@ -544,6 +556,7 @@ function goBackToPicker() {
   addToggle.title = 'Add to garden';
   pathCursor.hidden = true;
   placementToolkit.hidden = true;
+  placementToolkit.classList.remove('mobile-docked');
   dropPreview.visible = false;
   showSpecies();
   setPlantMenuOpen(true);
@@ -1599,6 +1612,40 @@ function updateCamera() {
   }
 }
 
+function worldPointAtClientPoint(clientX, clientY) {
+  const bounds = worldElement.getBoundingClientRect();
+  const visibleWidth = (camera.right - camera.left) / zoom;
+  const visibleHeight = (camera.top - camera.bottom) / zoom;
+  return {
+    x: camera.position.x + ((clientX - bounds.left) / bounds.width - 0.5) * visibleWidth + terrainOriginX,
+    z: camera.position.z + ((clientY - bounds.top) / bounds.height - 0.5) * visibleHeight + terrainOriginY,
+  };
+}
+
+function zoomAtClientPoint(nextZoom, clientX, clientY) {
+  const before = worldPointAtClientPoint(clientX, clientY);
+  zoom = nextZoom;
+  updateCamera();
+  const after = worldPointAtClientPoint(clientX, clientY);
+  target.x += before.x - after.x;
+  target.z += before.z - after.z;
+  updateCamera();
+  if (selectedItem) sizeCursorSprite(selectedItem.species);
+}
+
+function cancelTouchInteractionForPinch() {
+  drag = null;
+  pathStroke = null;
+  groundStroke = null;
+  placementPointerId = null;
+  pathStrokePreview.visible = false;
+  dropPreview.visible = false;
+  pathCursor.hidden = true;
+  placementToolkit.hidden = !placementToolkit.classList.contains('mobile-docked');
+  hoverCell = null;
+  worldElement.classList.remove('dragging', 'drawing-path');
+}
+
 function resize() {
   const width = worldElement.clientWidth;
   const height = worldElement.clientHeight;
@@ -1650,6 +1697,19 @@ function refreshPresence() {
 
 canvas.addEventListener('pointerdown', event => {
   if (event.button !== 0 && event.pointerType !== 'touch') return;
+  if (event.pointerType === 'touch') {
+    activeTouchPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (activeTouchPointers.size >= 2) {
+      event.preventDefault();
+      canvas.setPointerCapture(event.pointerId);
+      pinchGestureActive = true;
+      const [first, second] = [...activeTouchPointers.values()];
+      pinchGestureDistance = Math.hypot(second.x - first.x, second.y - first.y);
+      cancelTouchInteractionForPinch();
+      return;
+    }
+  }
+  if (pinchGestureActive) return;
   if (movingItem) {
     event.preventDefault();
     canvas.setPointerCapture(event.pointerId);
@@ -1721,6 +1781,22 @@ canvas.addEventListener('pointerdown', event => {
   worldElement.classList.add('dragging');
 });
 canvas.addEventListener('pointermove', event => {
+  if (event.pointerType === 'touch' && activeTouchPointers.has(event.pointerId)) {
+    activeTouchPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pinchGestureActive && activeTouchPointers.size >= 2) {
+      event.preventDefault();
+      const [first, second] = [...activeTouchPointers.values()];
+      const distance = Math.hypot(second.x - first.x, second.y - first.y);
+      const midpointX = (first.x + second.x) / 2;
+      const midpointY = (first.y + second.y) / 2;
+      if (pinchGestureDistance > 0 && distance > 0) {
+        zoomAtClientPoint(zoom * (distance / pinchGestureDistance), midpointX, midpointY);
+      }
+      pinchGestureDistance = distance;
+      return;
+    }
+  }
+  if (pinchGestureActive) return;
   if (movingItem) {
     const cell = cellAtClientPoint(event.clientX, event.clientY);
     if (cell) {
@@ -1783,6 +1859,15 @@ canvas.addEventListener('pointermove', event => {
   }
 });
 canvas.addEventListener('pointerup', event => {
+  if (event.pointerType === 'touch') activeTouchPointers.delete(event.pointerId);
+  if (pinchGestureActive) {
+    event.preventDefault();
+    if (activeTouchPointers.size === 0) {
+      pinchGestureActive = false;
+      pinchGestureDistance = 0;
+    }
+    return;
+  }
   if (movingPointerId === event.pointerId) {
     movingPointerId = null;
     const cell = cellAtClientPoint(event.clientX, event.clientY);
@@ -1822,7 +1907,12 @@ canvas.addEventListener('pointerup', event => {
   if (wasClick && selectedItem) void placeSelectedItem(cellAtClientPoint(event.clientX, event.clientY), event.shiftKey || shiftHeld);
   else if (wasClick) inspectAtClientPoint(event.clientX, event.clientY);
 });
-canvas.addEventListener('pointercancel', () => {
+canvas.addEventListener('pointercancel', event => {
+  if (event.pointerType === 'touch') activeTouchPointers.delete(event.pointerId);
+  if (activeTouchPointers.size === 0) {
+    pinchGestureActive = false;
+    pinchGestureDistance = 0;
+  }
   movingPointerId = null;
   placementPointerId = null;
   pathStroke = null;
@@ -1830,7 +1920,7 @@ canvas.addEventListener('pointercancel', () => {
   pathStrokePreview.visible = false;
   dropPreview.visible = false;
   pathCursor.hidden = true;
-  placementToolkit.hidden = true;
+  placementToolkit.hidden = !placementToolkit.classList.contains('mobile-docked');
   hoverCell = null;
   drag = null;
   worldElement.classList.remove('dragging');
@@ -1839,6 +1929,7 @@ canvas.addEventListener('pointercancel', () => {
 canvas.addEventListener('pointerleave', () => {
   if (movingItem || inspectedItem) return;
   if (drag || pathStroke || groundStroke) return;
+  if (placementToolkit.classList.contains('mobile-docked')) return;
   hoverCell = null;
   pathCursor.hidden = true;
   placementToolkit.hidden = true;
@@ -1849,9 +1940,7 @@ canvas.addEventListener('wheel', event => {
   const aspect = worldElement.clientWidth / worldElement.clientHeight;
   const landscapeSpan = WILDERNESS_HALF * 2;
   const minZoom = viewHeight / Math.min(landscapeSpan, landscapeSpan / aspect);
-  zoom = THREE.MathUtils.clamp(zoom * (event.deltaY < 0 ? 1.14 : 0.88), minZoom, 4.2);
-  updateCamera();
-  if (selectedItem) sizeCursorSprite(selectedItem.species);
+  zoomAtClientPoint(THREE.MathUtils.clamp(zoom * (event.deltaY < 0 ? 1.14 : 0.88), minZoom, 4.2), event.clientX, event.clientY);
 }, { passive: false });
 canvas.addEventListener('contextmenu', event => {
   event.preventDefault();
