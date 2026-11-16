@@ -4,7 +4,7 @@ const TREE_ASSETS = [
 ];
 const DETAIL_ASSETS = ['small-rock', 'mossy-rock', 'fallen-log', 'tree-stump'];
 const objectAssets = new Set(DETAIL_ASSETS);
-const SPRITE_CACHE_VERSION = '20261116-background-sprite-cache-v1';
+const SPRITE_CACHE_VERSION = '20261116-four-stage-only-v1';
 
 function hash(seed, ...values) {
   let h = seed >>> 0;
@@ -55,12 +55,7 @@ function speciesHeight(asset) {
 }
 
 function sourceFor(asset) {
-  // Use the approved, fully illustrated pine artwork for the surrounding
-  // forest too. The catalog's pine-tree-mature asset is only a simplified
-  // stage icon and reads like a placeholder when drawn at wilderness scale.
-  const path = asset === 'pine-tree-mature'
-    ? './assets/pine-mature.webp'
-    : objectAssets.has(asset)
+  const path = objectAssets.has(asset)
     ? `./assets/garden-objects/${asset}.webp`
     : `./assets/plants/${asset}.webp`;
   return `${path}?v=${SPRITE_CACHE_VERSION}`;

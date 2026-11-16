@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent
 DB_PATH = Path(os.environ.get("GARDEN_DB", ROOT / "data" / "garden.sqlite3"))
 WORLD_SIZE = 50
 ITEM_LOCK_SECONDS = 60 * 60
-HOURLY_CHANGE_LIMIT = 15
+HOURLY_CHANGE_LIMIT = 50
 CHANGE_BUCKET_SECONDS = 60 * 60
 REQUEST_RATE_WINDOW_SECONDS = 60
 VISITOR_POSTS_PER_MINUTE = 30
@@ -29,63 +29,63 @@ GROWTH_STAGES = ("seedling", "young", "growing", "mature")
 HOUR = 60 * 60
 DAY = 24 * HOUR
 # Each tuple is the time from seedling→young, young→growing, and growing→mature.
-# These are intentionally accelerated, with species-specific variation at every stage.
+# These are quarter-length growth intervals, rounded down to whole hours.
 GROWTH_PROFILES = {
-    "sunflower": (12 * HOUR, 18 * HOUR, 24 * HOUR),
-    "tulip": (18 * HOUR, 36 * HOUR, 48 * HOUR),
-    "rose": (2 * DAY, 4 * DAY, 6 * DAY),
-    "daisy": (12 * HOUR, 18 * HOUR, 24 * HOUR),
-    "lavender": (36 * HOUR, 3 * DAY, 5 * DAY),
-    "hydrangea": (3 * DAY, 5 * DAY, 7 * DAY),
-    "marigold": (12 * HOUR, 18 * HOUR, 24 * HOUR),
-    "bluebell": (18 * HOUR, 36 * HOUR, 48 * HOUR),
-    "peony": (4 * DAY, 7 * DAY, 10 * DAY),
-    "poppy": (12 * HOUR, 18 * HOUR, 24 * HOUR),
-    "oak_tree": (10 * DAY, 15 * DAY, 20 * DAY),
-    "pine_tree": (5 * DAY, 10 * DAY, 15 * DAY),
-    "cherry_blossom_tree": (3 * DAY, 5 * DAY, 7 * DAY),
-    "weeping_willow": (5 * DAY, 10 * DAY, 15 * DAY),
-    "apple_tree": (7 * DAY, 10 * DAY, 15 * DAY),
-    "maple_tree": (10 * DAY, 15 * DAY, 20 * DAY),
-    "birch_tree": (2 * DAY, 4 * DAY, 7 * DAY),
-    "azalea": (2 * DAY, 4 * DAY, 6 * DAY),
-    "boxwood": (5 * DAY, 10 * DAY, 15 * DAY),
-    "holly_bush": (5 * DAY, 10 * DAY, 15 * DAY),
-    "blueberry_bush": (2 * DAY, 4 * DAY, 7 * DAY),
-    "rhododendron": (7 * DAY, 10 * DAY, 15 * DAY),
-    "boston_fern": (24 * HOUR, 2 * DAY, 3 * DAY),
-    "clover": (4 * HOUR, 8 * HOUR, 16 * HOUR),
-    "english_ivy": (18 * HOUR, 36 * HOUR, 3 * DAY),
-    "cactus": (10 * DAY, 15 * DAY, 30 * DAY),
-    "palm_tree": (10 * DAY, 15 * DAY, 20 * DAY),
-    "monstera": (18 * HOUR, 36 * HOUR, 3 * DAY),
-    "fly_agaric_mushroom": (6 * HOUR, 12 * HOUR, 24 * HOUR),
-    "chanterelle_mushroom": (4 * HOUR, 8 * HOUR, 16 * HOUR),
-    "carrot": (8 * HOUR, 12 * HOUR, 18 * HOUR),
-    "tomato": (18 * HOUR, 24 * HOUR, 36 * HOUR),
-    "pumpkin": (24 * HOUR, 36 * HOUR, 48 * HOUR),
-    "lettuce": (6 * HOUR, 12 * HOUR, 18 * HOUR),
-    "corn": (18 * HOUR, 24 * HOUR, 36 * HOUR),
-    "strawberry": (18 * HOUR, 24 * HOUR, 36 * HOUR),
-    "watermelon": (24 * HOUR, 36 * HOUR, 48 * HOUR),
-    "raspberry_bush": (2 * DAY, 4 * DAY, 6 * DAY),
-    "pineapple": (3 * DAY, 5 * DAY, 7 * DAY),
+    "sunflower": (3 * HOUR, 4 * HOUR, 6 * HOUR),
+    "tulip": (4 * HOUR, 9 * HOUR, 12 * HOUR),
+    "rose": (12 * HOUR, 24 * HOUR, 36 * HOUR),
+    "daisy": (3 * HOUR, 4 * HOUR, 6 * HOUR),
+    "lavender": (9 * HOUR, 18 * HOUR, 30 * HOUR),
+    "hydrangea": (18 * HOUR, 30 * HOUR, 42 * HOUR),
+    "marigold": (3 * HOUR, 4 * HOUR, 6 * HOUR),
+    "bluebell": (4 * HOUR, 9 * HOUR, 12 * HOUR),
+    "peony": (24 * HOUR, 42 * HOUR, 60 * HOUR),
+    "poppy": (3 * HOUR, 4 * HOUR, 6 * HOUR),
+    "oak_tree": (60 * HOUR, 90 * HOUR, 120 * HOUR),
+    "pine_tree": (30 * HOUR, 60 * HOUR, 90 * HOUR),
+    "cherry_blossom_tree": (18 * HOUR, 30 * HOUR, 42 * HOUR),
+    "weeping_willow": (30 * HOUR, 60 * HOUR, 90 * HOUR),
+    "apple_tree": (42 * HOUR, 60 * HOUR, 90 * HOUR),
+    "maple_tree": (60 * HOUR, 90 * HOUR, 120 * HOUR),
+    "birch_tree": (12 * HOUR, 24 * HOUR, 42 * HOUR),
+    "azalea": (12 * HOUR, 24 * HOUR, 36 * HOUR),
+    "boxwood": (30 * HOUR, 60 * HOUR, 90 * HOUR),
+    "holly_bush": (30 * HOUR, 60 * HOUR, 90 * HOUR),
+    "blueberry_bush": (12 * HOUR, 24 * HOUR, 42 * HOUR),
+    "rhododendron": (42 * HOUR, 60 * HOUR, 90 * HOUR),
+    "boston_fern": (6 * HOUR, 12 * HOUR, 18 * HOUR),
+    "clover": (1 * HOUR, 2 * HOUR, 4 * HOUR),
+    "english_ivy": (4 * HOUR, 9 * HOUR, 18 * HOUR),
+    "cactus": (60 * HOUR, 90 * HOUR, 180 * HOUR),
+    "palm_tree": (60 * HOUR, 90 * HOUR, 120 * HOUR),
+    "monstera": (4 * HOUR, 9 * HOUR, 18 * HOUR),
+    "fly_agaric_mushroom": (1 * HOUR, 3 * HOUR, 6 * HOUR),
+    "chanterelle_mushroom": (1 * HOUR, 2 * HOUR, 4 * HOUR),
+    "carrot": (2 * HOUR, 3 * HOUR, 4 * HOUR),
+    "tomato": (4 * HOUR, 6 * HOUR, 9 * HOUR),
+    "pumpkin": (6 * HOUR, 9 * HOUR, 12 * HOUR),
+    "lettuce": (1 * HOUR, 3 * HOUR, 4 * HOUR),
+    "corn": (4 * HOUR, 6 * HOUR, 9 * HOUR),
+    "strawberry": (4 * HOUR, 6 * HOUR, 9 * HOUR),
+    "watermelon": (6 * HOUR, 9 * HOUR, 12 * HOUR),
+    "raspberry_bush": (12 * HOUR, 24 * HOUR, 36 * HOUR),
+    "pineapple": (18 * HOUR, 30 * HOUR, 42 * HOUR),
 }
 GROWTH_DEFAULTS_BY_KIND = {
-    "flower": (24 * HOUR, 24 * HOUR, 24 * HOUR),
-    "tree": (7 * DAY, 10 * DAY, 15 * DAY),
-    "pine": (5 * DAY, 10 * DAY, 15 * DAY),
-    "willow": (5 * DAY, 10 * DAY, 15 * DAY),
-    "shrub": (5 * DAY, 7 * DAY, 10 * DAY),
-    "fern": (24 * HOUR, 2 * DAY, 3 * DAY),
-    "groundcover": (12 * HOUR, 24 * HOUR, 2 * DAY),
-    "vine": (18 * HOUR, 36 * HOUR, 3 * DAY),
-    "cactus": (10 * DAY, 15 * DAY, 30 * DAY),
-    "palm": (10 * DAY, 15 * DAY, 20 * DAY),
-    "monstera": (18 * HOUR, 36 * HOUR, 3 * DAY),
-    "mushroom": (6 * HOUR, 12 * HOUR, 24 * HOUR),
-    "vegetable": (18 * HOUR, 24 * HOUR, 36 * HOUR),
-    "fruit": (24 * HOUR, 36 * HOUR, 48 * HOUR),
+    "flower": (6 * HOUR, 6 * HOUR, 6 * HOUR),
+    "tree": (42 * HOUR, 60 * HOUR, 90 * HOUR),
+    "pine": (30 * HOUR, 60 * HOUR, 90 * HOUR),
+    "willow": (30 * HOUR, 60 * HOUR, 90 * HOUR),
+    "shrub": (30 * HOUR, 42 * HOUR, 60 * HOUR),
+    "fern": (6 * HOUR, 12 * HOUR, 18 * HOUR),
+    "groundcover": (3 * HOUR, 6 * HOUR, 12 * HOUR),
+    "vine": (4 * HOUR, 9 * HOUR, 18 * HOUR),
+    "cactus": (60 * HOUR, 90 * HOUR, 180 * HOUR),
+    "palm": (60 * HOUR, 90 * HOUR, 120 * HOUR),
+    "monstera": (4 * HOUR, 9 * HOUR, 18 * HOUR),
+    "mushroom": (1 * HOUR, 3 * HOUR, 6 * HOUR),
+    "vegetable": (4 * HOUR, 6 * HOUR, 9 * HOUR),
+    "fruit": (6 * HOUR, 9 * HOUR, 12 * HOUR),
 }
 GROUND_MATERIALS = {"dirt", "sand", "mulch", "pea_gravel", "river_rocks", "wood_chips", "pine_straw"}
 PLANT_CATALOG = json.loads((ROOT / "plant-catalog.json").read_text())
@@ -341,17 +341,18 @@ def initialize(include_default_center_pine: bool = True) -> None:
                            (migration_time + delay, row["id"]))
         db.execute("CREATE INDEX IF NOT EXISTS plants_growth_due ON plants(next_growth_at)")
         profile_migration = db.execute(
-            "SELECT value FROM world_meta WHERE key='species_growth_profiles_v1'"
+            "SELECT value FROM world_meta WHERE key='species_growth_profiles_v2'"
         ).fetchone()
         if not profile_migration:
             changed_profiles = False
-            for row in db.execute("SELECT id,species FROM plants").fetchall():
+            for row in db.execute("SELECT id,species,next_growth_at FROM plants").fetchall():
                 delay = growth_delay(row["species"])
-                if delay is not None:
+                next_growth_at = migration_time + delay if delay is not None else None
+                if row["next_growth_at"] != next_growth_at:
                     db.execute("UPDATE plants SET next_growth_at=? WHERE id=?",
-                               (migration_time + delay, row["id"]))
+                               (next_growth_at, row["id"]))
                     changed_profiles = True
-            db.execute("INSERT OR REPLACE INTO world_meta VALUES ('species_growth_profiles_v1','1')")
+            db.execute("INSERT OR REPLACE INTO world_meta VALUES ('species_growth_profiles_v2','1')")
             if changed_profiles:
                 db.execute("INSERT OR REPLACE INTO world_meta VALUES ('revision',?)",
                            (str(world_revision(db) + 1),))

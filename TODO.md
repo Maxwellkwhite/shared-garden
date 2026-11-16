@@ -4,11 +4,11 @@ Use this file to track work for the shared garden prototype.
 
 ## To do
 
-- faster growth
 - tutorial
 - guides and help
 - add better search/categories
 - cozy music
+- cooler grid animation/placing animation
 - fix objects
 - growth using watering animation
 - Avatars	Visitors walk around as characters
@@ -24,14 +24,3 @@ Use this file to track work for the shared garden prototype.
 - expansion past 50x50
 
 
-## In progress
-
-- [ ] 
-
-## Done
-
-- 
-
-## Ideas for later
-
-- [ ] 

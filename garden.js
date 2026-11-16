@@ -3,7 +3,7 @@ import { GrassTerrainLayer } from './terrain.mjs?v=20261112-living-v3';
 import { createGroundTileCanvas, GroundTextureLayer, GROUND_MATERIALS } from './ground-textures.mjs?v=20261112-ground-minification-v3';
 import { createPathCanvas, pathConnectionMask } from './path-rendering.mjs?v=20261111path-surface-v6';
 import { createConnectedSegmentCanvas } from './fence-rendering.mjs?v=20261111connected-fence-v3';
-import { WildernessLayer } from './wilderness.mjs?v=20261112-woodland-v5';
+import { WildernessLayer } from './wilderness.mjs?v=20261116-four-stage-only-v1';
 
 const canvas = document.querySelector('#gardenCanvas');
 const worldElement = document.querySelector('#gardenWorld');
@@ -27,7 +27,7 @@ const itemHoverTag = document.querySelector('#itemHoverTag');
 const plantPreviewTimers = new WeakMap();
 let speciesGridRendered = false;
 const PLANT_PREVIEW_STAGES = ['seedling', 'young', 'growing', 'mature'];
-const PLANT_SPRITE_REVISION = '20261116-background-sprite-cache-v1';
+const PLANT_SPRITE_REVISION = '20261116-four-stage-only-v1';
 const versionedAssetUrl = path => `${path}?v=${PLANT_SPRITE_REVISION}`;
 // Some generated crop PNGs include slivers of neighboring artwork outside
 // the plant. Crop the display region only; keep the original assets intact.
@@ -169,52 +169,16 @@ const STAGES = [
 ];
 const stageById = new Map(STAGES.map((stage, index) => [stage.id, { ...stage, index }]));
 const LEGACY_ASSETS = {
-  pine_sapling: './assets/pine-sapling.webp', pine_growing: './assets/pine-growing.webp', pine_mature: './assets/pine-mature.webp',
-  daisy_small: './assets/daisy-small.webp', daisy_medium: './assets/daisy-medium.webp', daisy_mature: './assets/daisy-mature.webp',
-  tulip_small: './assets/tulip-small.webp', tulip_medium: './assets/tulip-medium.webp', tulip_mature: './assets/tulip-mature.webp',
-  sunflower_small: './assets/sunflower-small.webp', sunflower_medium: './assets/sunflower-medium.webp', sunflower_mature: './assets/sunflower-mature.webp',
+  pine_sapling: './assets/plants/pine-tree-seedling.webp',
+  pine_growing: './assets/plants/pine-tree-growing.webp',
+  pine_mature: './assets/plants/pine-tree-mature.webp',
+  daisy_small: './assets/plants/daisy-young.webp', daisy_medium: './assets/plants/daisy-growing.webp', daisy_mature: './assets/plants/daisy-mature.webp',
+  tulip_small: './assets/plants/tulip-young.webp', tulip_medium: './assets/plants/tulip-growing.webp', tulip_mature: './assets/plants/tulip-mature.webp',
+  sunflower_small: './assets/plants/sunflower-young.webp', sunflower_medium: './assets/plants/sunflower-growing.webp', sunflower_mature: './assets/plants/sunflower-mature.webp',
 };
 const plantGeometry = new Map();
-const REPAIRED_PLANT_ASSETS = {
-  tomato_growing: './assets/plants/tomato-growing-fixed.webp',
-  tomato_mature: './assets/plants/tomato-mature-fixed.webp',
-  carrot_mature: './assets/plants/carrot-mature-fixed.webp',
-  corn_growing: './assets/plants/corn-growing-fixed.webp',
-  corn_mature: './assets/plants/corn-mature-fixed.webp',
-  fly_agaric_mushroom_growing: './assets/plants/fly-agaric-mushroom-growing-fixed.webp',
-  fly_agaric_mushroom_seedling: './assets/plants/fly-agaric-mushroom-seedling-fixed.webp',
-  pumpkin_mature: './assets/plants/pumpkin-mature-fixed.webp',
-  raspberry_bush_mature: './assets/plants/raspberry-bush-mature-fixed.webp',
-  blueberry_bush_mature: './assets/plants/blueberry-bush-mature-fixed.webp',
-  blueberry_bush_young: './assets/plants/blueberry-bush-young-fixed.webp',
-  cherry_blossom_tree_growing: './assets/plants/cherry-blossom-tree-growing-fixed.webp',
-  cherry_blossom_tree_seedling: './assets/plants/cherry-blossom-tree-seedling-fixed.webp',
-  cherry_blossom_tree_young: './assets/plants/cherry-blossom-tree-young-fixed.webp',
-  daisy_growing: './assets/plants/daisy-growing-fixed.webp',
-  daisy_mature: './assets/plants/daisy-mature-fixed.webp',
-  maple_tree_seedling: './assets/plants/maple-tree-seedling-fixed.webp',
-  monstera_growing: './assets/plants/monstera-growing-fixed.webp',
-  oak_tree_growing: './assets/plants/oak-tree-growing-fixed.webp',
-  oak_tree_seedling: './assets/plants/oak-tree-seedling-fixed.webp',
-  oak_tree_young: './assets/plants/oak-tree-young-fixed.webp',
-  apple_tree_young: './assets/plants/apple-tree-young-fixed.webp',
-  birch_tree_seedling: './assets/plants/birch-tree-seedling-fixed.webp',
-  hydrangea_seedling: './assets/plants/hydrangea-seedling-fixed.webp',
-  lavender_seedling: './assets/plants/lavender-seedling-fixed.webp',
-  palm_tree_growing: './assets/plants/palm-tree-growing-fixed.webp',
-  sunflower_seedling: './assets/plants/sunflower-seedling-fixed.webp',
-  marigold_growing: './assets/plants/marigold-growing-fixed.webp',
-};
 const plantAsset = species => {
   if (gardenObjectById.has(species)) return versionedAssetUrl(`./assets/garden-objects/${species.replaceAll('_', '-')}.webp`);
-  const approvedPineAssets = {
-    pine_tree_seedling: './assets/pine-sapling.webp',
-    pine_tree_young: './assets/pine-sapling.webp',
-    pine_tree_growing: './assets/pine-growing.webp',
-    pine_tree_mature: './assets/pine-mature.webp',
-  };
-  if (approvedPineAssets[species]) return versionedAssetUrl(approvedPineAssets[species]);
-  if (REPAIRED_PLANT_ASSETS[species]) return versionedAssetUrl(REPAIRED_PLANT_ASSETS[species]);
   if (LEGACY_ASSETS[species]) return versionedAssetUrl(LEGACY_ASSETS[species]);
   const split = species.lastIndexOf('_');
   return versionedAssetUrl(`./assets/plants/${species.slice(0, split).replaceAll('_', '-')}-${species.slice(split + 1)}.webp`);
@@ -252,8 +216,8 @@ function geometryFor(species, aspect = null) {
   width *= scale;
   height *= scale;
   // New illustrated sprites have different natural silhouettes by species.
-  // Match their source aspect ratio so trees, flowers, and shrubs are not
-  // squeezed into the generic billboard dimensions. Approved pine stays exact.
+  // Match each source aspect ratio so trees, flowers, and shrubs are not
+  // squeezed into the generic billboard dimensions.
   if (aspect && !oldPine && !LEGACY_ASSETS[species]) width = height * aspect;
   const groundAnchor = oldPine ? 1.4 : height * 0.425;
   const geometry = new THREE.PlaneGeometry(width, height);

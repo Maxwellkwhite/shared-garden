@@ -192,6 +192,7 @@ def write_png(path: Path, pixels: list[list[tuple[int, int, int, int]]]) -> None
 
 
 if __name__ == "__main__":
-    for flower in ("daisy", "tulip", "sunflower"):
-        for stage, label in ((1, "small"), (2, "medium"), (3, "mature")):
-            write_png(OUT / f"{flower}-{label}.png", make_sprite(flower, stage))
+    raise SystemExit(
+        "This three-stage sprite generator is retired. "
+        "Use generate_plant_sprites.py for the canonical four growth stages."
+    )

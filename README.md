@@ -19,6 +19,8 @@ Open [http://localhost:4173](http://localhost:4173). Three.js is loaded from jsD
 
 The defaults are a 16 world-unit chunk, 16 pixel samples per unit, 1.2-unit tuft spacing, 0.42-unit carpet-mark spacing, one buffered chunk, a 64-texture LRU cache, and seed `0x4c697474`. Change `TERRAIN_DEFAULTS` in `terrain-core.mjs` and the `GrassTerrainLayer` options in `garden.js` to tune the meadow.
 
+Plant sprites live in `assets/plants/` with one WebP for each of the four stages: seedling, young, growing, and mature. Legacy plant records resolve to these canonical stage assets.
+
 The world bounds and the grid overlay are configured in [garden.js](./garden.js). Run the deterministic, chunk-edge, and world-boundary checks with:
 
 ```sh
