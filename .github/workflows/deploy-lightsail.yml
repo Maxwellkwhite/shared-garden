@@ -20,6 +20,37 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git -C /opt/common-garden pull --ff-only origin main
+          APP=/opt/common-garden
+          DATA="$APP/data"
+          MARKER="$DATA/.qa-db-imported"
+          mkdir -p "$DATA"
+
+          # Stop accepting writes during the one-time snapshot handoff when permitted.
+          sudo -n /usr/bin/systemctl stop common-garden 2>/dev/null || true
+
+          # Preserve the live database before the one-time QA import.
+          if [ ! -f "$MARKER" ]; then
+            python3 - "$APP/garden.sqlite3" "$DATA/pre-qa-live-backup.sqlite3" <<'PY'
+          import pathlib, sqlite3, sys
+          source_path, backup_path = map(pathlib.Path, sys.argv[1:])
+          if source_path.exists():
+              with sqlite3.connect(source_path) as source, sqlite3.connect(backup_path) as backup:
+                  source.backup(backup)
+          PY
+          fi
+
+          # The old app wrote into a tracked file; discard only that checkout copy.
+          git -C "$APP" checkout -- garden.sqlite3 2>/dev/null || true
+          git -C "$APP" pull --ff-only origin main
+
+          # Seed the persistent, ignored database once from the QA snapshot in Git history.
+          if [ ! -f "$MARKER" ]; then
+            DB_REVISION="$(git -C "$APP" log -1 --format=%H -- garden.sqlite3)"
+            test -n "$DB_REVISION"
+            git -C "$APP" show "$DB_REVISION:garden.sqlite3" > "$DATA/garden.sqlite3.tmp"
+            mv "$DATA/garden.sqlite3.tmp" "$DATA/garden.sqlite3"
+            touch "$MARKER"
+          fi
+
           sudo -n /usr/bin/systemctl restart common-garden
           systemctl is-active --quiet common-garden

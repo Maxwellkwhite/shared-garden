@@ -25,4 +25,6 @@ The world bounds and the grid overlay are configured in [garden.js](./garden.js)
 node --test terrain-core.test.mjs
 ```
 
-The server stores anonymous visitor presence and shared plant placement in `garden.sqlite3`.
+The server stores anonymous visitor presence and shared garden state in the ignored
+`data/garden.sqlite3` file by default. Set `GARDEN_DB` to use another path. Live deploys
+import the QA database once, then keep the persistent database across later code releases.

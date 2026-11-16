@@ -27,7 +27,8 @@ const itemHoverTag = document.querySelector('#itemHoverTag');
 const plantPreviewTimers = new WeakMap();
 let speciesGridRendered = false;
 const PLANT_PREVIEW_STAGES = ['seedling', 'young', 'growing', 'mature'];
-const PLANT_SPRITE_REVISION = '20261112-plant-sprite-audit-v1';
+const PLANT_SPRITE_REVISION = '20261116-background-sprite-cache-v1';
+const versionedAssetUrl = path => `${path}?v=${PLANT_SPRITE_REVISION}`;
 // Some generated crop PNGs include slivers of neighboring artwork outside
 // the plant. Crop the display region only; keep the original assets intact.
 const PLANT_SPRITE_CROPS = {
@@ -74,8 +75,6 @@ const changeAllowanceIndicator = document.querySelector('#changeAllowance');
 const profilePanel = document.querySelector('#profilePanel');
 const profileNameInput = document.querySelector('#profileName');
 const saveProfileName = document.querySelector('#saveProfileName');
-const unlimitedChangesToggle = document.querySelector('#unlimitedChanges');
-const changeLimitStatus = document.querySelector('#changeLimitStatus');
 const itemAttribution = document.querySelector('#itemAttribution');
 const attributionTitle = document.querySelector('#attributionTitle');
 const attributionAuthor = document.querySelector('#attributionAuthor');
@@ -93,14 +92,6 @@ const visitorId = localStorage.getItem('common-garden-visitor') || (() => {
 })();
 function updateChangeAllowance(allowance) {
   if (!allowance || !Number.isFinite(allowance.remaining) || !Number.isFinite(allowance.resets_at)) return;
-  unlimitedChangesToggle.checked = Boolean(allowance.unlimited);
-  if (allowance.unlimited) {
-    changeAllowanceIndicator.textContent = '∞';
-    changeAllowanceIndicator.dataset.tooltip = 'Unlimited garden changes in this browser';
-    changeAllowanceIndicator.setAttribute('aria-label', 'Unlimited garden changes in this browser.');
-    changeAllowanceIndicator.classList.remove('empty');
-    return;
-  }
   const remaining = Math.max(0, allowance.remaining);
   const resetAt = new Date(allowance.resets_at * 1000);
   const resetTime = resetAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -215,18 +206,18 @@ const REPAIRED_PLANT_ASSETS = {
   marigold_growing: './assets/plants/marigold-growing-fixed.webp',
 };
 const plantAsset = species => {
-  if (gardenObjectById.has(species)) return `./assets/garden-objects/${species.replaceAll('_', '-')}.webp`;
+  if (gardenObjectById.has(species)) return versionedAssetUrl(`./assets/garden-objects/${species.replaceAll('_', '-')}.webp`);
   const approvedPineAssets = {
     pine_tree_seedling: './assets/pine-sapling.webp',
     pine_tree_young: './assets/pine-sapling.webp',
     pine_tree_growing: './assets/pine-growing.webp',
     pine_tree_mature: './assets/pine-mature.webp',
   };
-  if (approvedPineAssets[species]) return approvedPineAssets[species];
-  if (REPAIRED_PLANT_ASSETS[species]) return `${REPAIRED_PLANT_ASSETS[species]}?v=${PLANT_SPRITE_REVISION}`;
-  if (LEGACY_ASSETS[species]) return LEGACY_ASSETS[species];
+  if (approvedPineAssets[species]) return versionedAssetUrl(approvedPineAssets[species]);
+  if (REPAIRED_PLANT_ASSETS[species]) return versionedAssetUrl(REPAIRED_PLANT_ASSETS[species]);
+  if (LEGACY_ASSETS[species]) return versionedAssetUrl(LEGACY_ASSETS[species]);
   const split = species.lastIndexOf('_');
-  return `./assets/plants/${species.slice(0, split).replaceAll('_', '-')}-${species.slice(split + 1)}.webp?v=${PLANT_SPRITE_REVISION}`;
+  return versionedAssetUrl(`./assets/plants/${species.slice(0, split).replaceAll('_', '-')}-${species.slice(split + 1)}.webp`);
 };
 function geometryFor(species, aspect = null) {
   const object = gardenObjectById.get(species);
@@ -352,28 +343,6 @@ saveProfileName.addEventListener('click', () => {
 profileNameInput.addEventListener('keydown', event => {
   if (event.key === 'Enter') saveProfileName.click();
 });
-unlimitedChangesToggle.addEventListener('change', async () => {
-  const enabled = unlimitedChangesToggle.checked;
-  unlimitedChangesToggle.disabled = true;
-  changeLimitStatus.textContent = 'Saving…';
-  try {
-    const response = await fetch('/api/visitor-settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Visitor-Id': visitorId },
-      body: JSON.stringify({ unlimited_changes: enabled }),
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(apiErrorMessage(result, 'Could not update the change limit'));
-    updateChangeAllowance(result.change_allowance);
-    changeLimitStatus.textContent = enabled ? 'Hourly change cap removed for this browser.' : '15 changes per hour restored.';
-  } catch (error) {
-    unlimitedChangesToggle.checked = !enabled;
-    changeLimitStatus.textContent = error.message;
-  } finally {
-    unlimitedChangesToggle.disabled = false;
-  }
-});
-
 function showItemHoverTag(choice) {
   if (!choice || plantMenu.hidden) return;
   const label = choice.getAttribute('aria-label') || choice.querySelector('img')?.alt;

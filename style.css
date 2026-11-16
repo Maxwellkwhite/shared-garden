@@ -36,12 +36,6 @@ body{overscroll-behavior:none}
 .profile-edit-row input{min-width:0;flex:1;padding:8px 9px;border:1px solid rgba(221,239,206,.25);border-radius:7px;background:rgba(255,255,255,.07);color:#edf2e5;font:500 13px system-ui,sans-serif;outline:none}
 .profile-edit-row input:focus{border-color:#a7ce93}
 .profile-edit-row button{padding:7px 11px;border:1px solid rgba(221,239,206,.28);border-radius:7px;background:#a7ce93;color:#19351e;font:700 12px system-ui,sans-serif;cursor:pointer}
-.profile-limit-setting{margin-top:13px;padding-top:11px;border-top:1px solid rgba(221,239,206,.16)}
-.profile-limit-label{display:block;margin-bottom:7px;color:#d5e8c8;font-size:12px;font-weight:700}
-.profile-limit-toggle{display:flex;align-items:center;gap:8px;color:#edf2e5;font-size:13px;font-weight:600;cursor:pointer}
-.profile-limit-toggle input{width:16px;height:16px;margin:0;accent-color:#a7ce93}
-.profile-limit-setting p{margin:6px 0 0;color:rgba(237,242,229,.68);font-size:11px;line-height:1.35}
-.profile-limit-status{display:block;margin-top:6px;color:#c7dfb8;font-size:11px;line-height:1.35}
 .item-attribution{position:fixed;z-index:11;left:0;top:0;display:grid;gap:4px;width:min(238px,calc(100vw - 16px));padding:10px 12px;border:1px solid rgba(221,239,206,.36);border-radius:10px;background:rgba(25,48,30,.98);color:#edf2e5;box-shadow:0 8px 24px rgba(10,24,13,.4);font:500 12px/1.3 system-ui,sans-serif;pointer-events:auto;will-change:transform}
 .item-attribution[hidden]{display:none}
 .item-attribution strong{color:#d5e8c8;font-size:14px}

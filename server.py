@@ -14,7 +14,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parent
-DB_PATH = Path(os.environ.get("GARDEN_DB", ROOT / "garden.sqlite3"))
+DB_PATH = Path(os.environ.get("GARDEN_DB", ROOT / "data" / "garden.sqlite3"))
 WORLD_SIZE = 50
 ITEM_LOCK_SECONDS = 60 * 60
 HOURLY_CHANGE_LIMIT = 15
@@ -197,13 +197,6 @@ def advance_plant_growth(db: sqlite3.Connection, now: float | None = None) -> bo
 def change_allowance(db: sqlite3.Connection, visitor_id: str, now: float | None = None) -> dict:
     now = time.time() if now is None else now
     hour_start = int(now // CHANGE_BUCKET_SECONDS) * CHANGE_BUCKET_SECONDS
-    settings_table = db.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='visitor_settings'"
-    ).fetchone()
-    setting = db.execute(
-        "SELECT unlimited_changes FROM visitor_settings WHERE visitor_id=?", (visitor_id,)
-    ).fetchone() if visitor_id and settings_table else None
-    unlimited = bool(setting and setting[0])
     row = db.execute(
         "SELECT changes_used FROM hourly_change_usage WHERE visitor_id=? AND hour_start=?",
         (visitor_id or "anonymous", hour_start),
@@ -214,7 +207,6 @@ def change_allowance(db: sqlite3.Connection, visitor_id: str, now: float | None 
         "used": used,
         "remaining": max(0, HOURLY_CHANGE_LIMIT - used),
         "resets_at": hour_start + CHANGE_BUCKET_SECONDS,
-        "unlimited": unlimited,
     }
 
 
@@ -222,8 +214,6 @@ def consume_changes(db: sqlite3.Connection, visitor_id: str, amount: int = 1) ->
     """Consume an allowance inside the caller's write transaction."""
     now = time.time()
     allowance = change_allowance(db, visitor_id, now)
-    if allowance.get("unlimited"):
-        return True, allowance
     if amount < 1 or amount > allowance["remaining"]:
         return False, allowance
     hour_start = int(now // CHANGE_BUCKET_SECONDS) * CHANGE_BUCKET_SECONDS
@@ -293,6 +283,7 @@ def db_session():
 
 
 def initialize(include_default_center_pine: bool = True) -> None:
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with db_session() as db:
         db.executescript("""
             CREATE TABLE IF NOT EXISTS visitors (
@@ -484,7 +475,11 @@ class Handler(SimpleHTTPRequestHandler):
         return
 
     def end_headers(self) -> None:
-        self.send_header("Cache-Control", "no-store, max-age=0")
+        request_path = urlparse(self.path).path
+        if request_path.startswith("/assets/") and request_path.endswith(".webp"):
+            self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+        else:
+            self.send_header("Cache-Control", "no-store, max-age=0")
         super().end_headers()
 
     def send_json(self, value: dict, status: int = 200, headers: dict | None = None) -> None:
@@ -530,31 +525,6 @@ class Handler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/path-stroke":
             self.do_path_stroke()
-            return
-        if parsed.path == "/api/visitor-settings":
-            if not visitor_id:
-                self.send_json({"error": "visitor_id_required"}, 400)
-                return
-            try:
-                length = int(self.headers.get("Content-Length", "0"))
-                if length < 1 or length > 1024:
-                    raise ValueError("invalid body length")
-                payload = json.loads(self.rfile.read(length))
-                unlimited = payload.get("unlimited_changes")
-                if type(unlimited) is not bool:
-                    raise ValueError("unlimited_changes must be a boolean")
-            except (ValueError, json.JSONDecodeError, AttributeError, TypeError):
-                self.send_json({"error": "invalid_visitor_setting"}, 400)
-                return
-            with db_session() as db:
-                db.execute("BEGIN IMMEDIATE")
-                db.execute(
-                    "INSERT INTO visitor_settings (visitor_id,unlimited_changes) VALUES (?,?) "
-                    "ON CONFLICT(visitor_id) DO UPDATE SET unlimited_changes=excluded.unlimited_changes",
-                    (visitor_id, int(unlimited)),
-                )
-                allowance = change_allowance(db, visitor_id)
-            self.send_json({"change_allowance": allowance})
             return
         if parsed.path == "/api/ground-stroke":
             self.do_ground_stroke()
