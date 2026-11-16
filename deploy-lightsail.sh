@@ -56,9 +56,9 @@ pulled=1
 
 # The QA snapshot is the last version of garden.sqlite3 in Git history.
 if [ ! -f "$MARKER" ]; then
-  db_revision="$(git log -1 --format=%H -- garden.sqlite3)"
+  db_revision="$(git log -1 --format=%H --diff-filter=AM -- garden.sqlite3)"
   test -n "$db_revision"
-  git show "$db_revision:garden.sqlite3" > "$DB_TARGET.tmp"
+  git show "${db_revision}:garden.sqlite3" > "$DB_TARGET.tmp"
   python3 - "$DB_TARGET.tmp" <<'PY'
 import sqlite3, sys
 
