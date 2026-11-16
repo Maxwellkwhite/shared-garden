@@ -177,55 +177,55 @@ const STAGES = [
 ];
 const stageById = new Map(STAGES.map((stage, index) => [stage.id, { ...stage, index }]));
 const LEGACY_ASSETS = {
-  pine_sapling: './assets/pine-sapling.png', pine_growing: './assets/pine-growing.png', pine_mature: './assets/pine-mature.png',
-  daisy_small: './assets/daisy-small.png', daisy_medium: './assets/daisy-medium.png', daisy_mature: './assets/daisy-mature.png',
-  tulip_small: './assets/tulip-small.png', tulip_medium: './assets/tulip-medium.png', tulip_mature: './assets/tulip-mature.png',
-  sunflower_small: './assets/sunflower-small.png', sunflower_medium: './assets/sunflower-medium.png', sunflower_mature: './assets/sunflower-mature.png',
+  pine_sapling: './assets/pine-sapling.webp', pine_growing: './assets/pine-growing.webp', pine_mature: './assets/pine-mature.webp',
+  daisy_small: './assets/daisy-small.webp', daisy_medium: './assets/daisy-medium.webp', daisy_mature: './assets/daisy-mature.webp',
+  tulip_small: './assets/tulip-small.webp', tulip_medium: './assets/tulip-medium.webp', tulip_mature: './assets/tulip-mature.webp',
+  sunflower_small: './assets/sunflower-small.webp', sunflower_medium: './assets/sunflower-medium.webp', sunflower_mature: './assets/sunflower-mature.webp',
 };
 const plantGeometry = new Map();
 const REPAIRED_PLANT_ASSETS = {
-  tomato_growing: './assets/plants/tomato-growing-fixed.png',
-  tomato_mature: './assets/plants/tomato-mature-fixed.png',
-  carrot_mature: './assets/plants/carrot-mature-fixed.png',
-  corn_growing: './assets/plants/corn-growing-fixed.png',
-  corn_mature: './assets/plants/corn-mature-fixed.png',
-  fly_agaric_mushroom_growing: './assets/plants/fly-agaric-mushroom-growing-fixed.png',
-  fly_agaric_mushroom_seedling: './assets/plants/fly-agaric-mushroom-seedling-fixed.png',
-  pumpkin_mature: './assets/plants/pumpkin-mature-fixed.png',
-  raspberry_bush_mature: './assets/plants/raspberry-bush-mature-fixed.png',
-  blueberry_bush_mature: './assets/plants/blueberry-bush-mature-fixed.png',
-  blueberry_bush_young: './assets/plants/blueberry-bush-young-fixed.png',
-  cherry_blossom_tree_growing: './assets/plants/cherry-blossom-tree-growing-fixed.png',
-  cherry_blossom_tree_seedling: './assets/plants/cherry-blossom-tree-seedling-fixed.png',
-  cherry_blossom_tree_young: './assets/plants/cherry-blossom-tree-young-fixed.png',
-  daisy_growing: './assets/plants/daisy-growing-fixed.png',
-  daisy_mature: './assets/plants/daisy-mature-fixed.png',
-  maple_tree_seedling: './assets/plants/maple-tree-seedling-fixed.png',
-  monstera_growing: './assets/plants/monstera-growing-fixed.png',
-  oak_tree_growing: './assets/plants/oak-tree-growing-fixed.png',
-  oak_tree_seedling: './assets/plants/oak-tree-seedling-fixed.png',
-  oak_tree_young: './assets/plants/oak-tree-young-fixed.png',
-  apple_tree_young: './assets/plants/apple-tree-young-fixed.png',
-  birch_tree_seedling: './assets/plants/birch-tree-seedling-fixed.png',
-  hydrangea_seedling: './assets/plants/hydrangea-seedling-fixed.png',
-  lavender_seedling: './assets/plants/lavender-seedling-fixed.png',
-  palm_tree_growing: './assets/plants/palm-tree-growing-fixed.png',
-  sunflower_seedling: './assets/plants/sunflower-seedling-fixed.png',
-  marigold_growing: './assets/plants/marigold-growing-fixed.png',
+  tomato_growing: './assets/plants/tomato-growing-fixed.webp',
+  tomato_mature: './assets/plants/tomato-mature-fixed.webp',
+  carrot_mature: './assets/plants/carrot-mature-fixed.webp',
+  corn_growing: './assets/plants/corn-growing-fixed.webp',
+  corn_mature: './assets/plants/corn-mature-fixed.webp',
+  fly_agaric_mushroom_growing: './assets/plants/fly-agaric-mushroom-growing-fixed.webp',
+  fly_agaric_mushroom_seedling: './assets/plants/fly-agaric-mushroom-seedling-fixed.webp',
+  pumpkin_mature: './assets/plants/pumpkin-mature-fixed.webp',
+  raspberry_bush_mature: './assets/plants/raspberry-bush-mature-fixed.webp',
+  blueberry_bush_mature: './assets/plants/blueberry-bush-mature-fixed.webp',
+  blueberry_bush_young: './assets/plants/blueberry-bush-young-fixed.webp',
+  cherry_blossom_tree_growing: './assets/plants/cherry-blossom-tree-growing-fixed.webp',
+  cherry_blossom_tree_seedling: './assets/plants/cherry-blossom-tree-seedling-fixed.webp',
+  cherry_blossom_tree_young: './assets/plants/cherry-blossom-tree-young-fixed.webp',
+  daisy_growing: './assets/plants/daisy-growing-fixed.webp',
+  daisy_mature: './assets/plants/daisy-mature-fixed.webp',
+  maple_tree_seedling: './assets/plants/maple-tree-seedling-fixed.webp',
+  monstera_growing: './assets/plants/monstera-growing-fixed.webp',
+  oak_tree_growing: './assets/plants/oak-tree-growing-fixed.webp',
+  oak_tree_seedling: './assets/plants/oak-tree-seedling-fixed.webp',
+  oak_tree_young: './assets/plants/oak-tree-young-fixed.webp',
+  apple_tree_young: './assets/plants/apple-tree-young-fixed.webp',
+  birch_tree_seedling: './assets/plants/birch-tree-seedling-fixed.webp',
+  hydrangea_seedling: './assets/plants/hydrangea-seedling-fixed.webp',
+  lavender_seedling: './assets/plants/lavender-seedling-fixed.webp',
+  palm_tree_growing: './assets/plants/palm-tree-growing-fixed.webp',
+  sunflower_seedling: './assets/plants/sunflower-seedling-fixed.webp',
+  marigold_growing: './assets/plants/marigold-growing-fixed.webp',
 };
 const plantAsset = species => {
-  if (gardenObjectById.has(species)) return `./assets/garden-objects/${species.replaceAll('_', '-')}.png`;
+  if (gardenObjectById.has(species)) return `./assets/garden-objects/${species.replaceAll('_', '-')}.webp`;
   const approvedPineAssets = {
-    pine_tree_seedling: './assets/pine-sapling.png',
-    pine_tree_young: './assets/pine-sapling.png',
-    pine_tree_growing: './assets/pine-growing.png',
-    pine_tree_mature: './assets/pine-mature.png',
+    pine_tree_seedling: './assets/pine-sapling.webp',
+    pine_tree_young: './assets/pine-sapling.webp',
+    pine_tree_growing: './assets/pine-growing.webp',
+    pine_tree_mature: './assets/pine-mature.webp',
   };
   if (approvedPineAssets[species]) return approvedPineAssets[species];
   if (REPAIRED_PLANT_ASSETS[species]) return `${REPAIRED_PLANT_ASSETS[species]}?v=${PLANT_SPRITE_REVISION}`;
   if (LEGACY_ASSETS[species]) return LEGACY_ASSETS[species];
   const split = species.lastIndexOf('_');
-  return `./assets/plants/${species.slice(0, split).replaceAll('_', '-')}-${species.slice(split + 1)}.png?v=${PLANT_SPRITE_REVISION}`;
+  return `./assets/plants/${species.slice(0, split).replaceAll('_', '-')}-${species.slice(split + 1)}.webp?v=${PLANT_SPRITE_REVISION}`;
 };
 function geometryFor(species, aspect = null) {
   const object = gardenObjectById.get(species);
@@ -1347,9 +1347,8 @@ async function placeSelectedItem(cell, keepSelected = false) {
       addToggle.title = 'Add to garden';
       pathCursor.hidden = true;
       placementToolkit.hidden = true;
+      placementToolkit.classList.remove('mobile-docked');
       dropPreview.visible = false;
-      showSpecies();
-      setPlantMenuOpen(true);
       return;
     }
   } catch (error) {

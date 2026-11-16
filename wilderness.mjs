@@ -57,10 +57,10 @@ function sourceFor(asset) {
   // Use the approved, fully illustrated pine artwork for the surrounding
   // forest too. The catalog's pine-tree-mature asset is only a simplified
   // stage icon and reads like a placeholder when drawn at wilderness scale.
-  if (asset === 'pine-tree-mature') return './assets/pine-mature.png';
+  if (asset === 'pine-tree-mature') return './assets/pine-mature.webp';
   return objectAssets.has(asset)
-    ? `./assets/garden-objects/${asset}.png`
-    : `./assets/plants/${asset}.png`;
+    ? `./assets/garden-objects/${asset}.webp`
+    : `./assets/plants/${asset}.webp`;
 }
 
 export class WildernessLayer {

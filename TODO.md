@@ -5,7 +5,6 @@ Use this file to track work for the shared garden prototype.
 ## To do
 
 - expansion past 50x50
-- mobile is horrible
 - slow loading of images
 - tutorial
 - guides and help
