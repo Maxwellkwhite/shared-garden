@@ -3,11 +3,13 @@ import { GrassTerrainLayer } from './terrain.mjs?v=20261112-living-v3';
 import { createGroundTileCanvas, GroundTextureLayer, GROUND_MATERIALS } from './ground-textures.mjs?v=20261112-ground-minification-v3';
 import { createPathCanvas, pathConnectionMask } from './path-rendering.mjs?v=20261111path-surface-v6';
 import { createConnectedSegmentCanvas } from './fence-rendering.mjs?v=20261111connected-fence-v3';
-import { WildernessLayer } from './wilderness.mjs?v=20261116-four-stage-only-v1';
+import { WildernessLayer } from './wilderness.mjs?v=20261117-pine-mature-v2';
+import { setupHelpGuide } from './help-guide.mjs?v=20261117-help-guide-v5';
 
 const canvas = document.querySelector('#gardenCanvas');
 const worldElement = document.querySelector('#gardenWorld');
 const gridToggle = document.querySelector('#gridToggle');
+const musicToggle = document.querySelector('#musicToggle');
 const addToggle = document.querySelector('#addToggle');
 const plantMenu = document.querySelector('#plantMenu');
 const speciesGrid = document.querySelector('#speciesGrid');
@@ -27,7 +29,7 @@ const itemHoverTag = document.querySelector('#itemHoverTag');
 const plantPreviewTimers = new WeakMap();
 let speciesGridRendered = false;
 const PLANT_PREVIEW_STAGES = ['seedling', 'young', 'growing', 'mature'];
-const PLANT_SPRITE_REVISION = '20261116-four-stage-only-v1';
+const PLANT_SPRITE_REVISION = '20261117-pine-mature-v2';
 const versionedAssetUrl = path => `${path}?v=${PLANT_SPRITE_REVISION}`;
 // Some generated crop PNGs include slivers of neighboring artwork outside
 // the plant. Crop the display region only; keep the original assets intact.
@@ -276,6 +278,72 @@ gridToggle.addEventListener('click', () => {
   gridToggle.setAttribute('aria-pressed', String(worldGrid.visible));
   gridToggle.setAttribute('aria-label', worldGrid.visible ? 'Hide grid' : 'Show grid');
 });
+const gardenMusic = new Audio('./assets/music/purrple-cat-beautiful-day.mp3');
+gardenMusic.preload = 'auto';
+gardenMusic.autoplay = true;
+gardenMusic.volume = 0.38;
+let musicEnabled = true;
+let musicPlaying = false;
+let musicStartPending = false;
+let musicGestureSeen = false;
+let musicRetryAfterPending = false;
+function setMusicEnabled(enabled) {
+  musicEnabled = enabled;
+  musicToggle.setAttribute('aria-pressed', String(enabled && musicPlaying));
+  musicToggle.setAttribute('aria-label', musicPlaying ? 'Pause garden music' : 'Play garden music');
+}
+async function startGardenMusic() {
+  if (!musicEnabled || musicPlaying || musicStartPending) return;
+  musicStartPending = true;
+  try {
+    await gardenMusic.play();
+    musicPlaying = true;
+    setMusicEnabled(true);
+  } catch {
+    musicPlaying = false;
+    setMusicEnabled(true);
+  } finally {
+    musicStartPending = false;
+    if (musicRetryAfterPending && musicGestureSeen && musicEnabled && !musicPlaying) {
+      musicRetryAfterPending = false;
+      void startGardenMusic();
+    }
+  }
+}
+musicToggle.addEventListener('click', () => {
+  if (musicStartPending) {
+    musicGestureSeen = true;
+    musicRetryAfterPending = true;
+    return;
+  }
+  if (musicPlaying) {
+    gardenMusic.pause();
+    musicPlaying = false;
+    setMusicEnabled(false);
+  } else {
+    musicEnabled = true;
+    setMusicEnabled(true);
+    void startGardenMusic();
+  }
+});
+gardenMusic.addEventListener('ended', () => {
+  musicPlaying = false;
+  setMusicEnabled(false);
+});
+const resumeMusicAfterGesture = (event) => {
+  if (event?.target instanceof Element && musicToggle.contains(event.target)) return;
+  musicGestureSeen = true;
+  if (!musicEnabled || musicPlaying) return;
+  if (musicStartPending) {
+    musicRetryAfterPending = true;
+    return;
+  }
+  void startGardenMusic();
+};
+document.addEventListener('pointerdown', resumeMusicAfterGesture, { capture: true });
+document.addEventListener('keydown', resumeMusicAfterGesture, { capture: true });
+setMusicEnabled(true);
+void startGardenMusic();
 
 function setPlantMenuOpen(open) {
   if (open && !speciesGridRendered) showSpecies();
@@ -297,6 +365,14 @@ function setProfileOpen(open) {
   }
 }
 
+setupHelpGuide({
+  plantCatalog,
+  onOpen() {
+    setPlantMenuOpen(false);
+    setProfileOpen(false);
+  },
+});
+
 userToggle.addEventListener('click', () => setProfileOpen(profilePanel.hidden));
 saveProfileName.addEventListener('click', () => {
   visitorName = profileNameInput.value.trim().replace(/\s+/g, ' ').slice(0, 32) || visitorName;
@@ -307,19 +383,38 @@ saveProfileName.addEventListener('click', () => {
 profileNameInput.addEventListener('keydown', event => {
   if (event.key === 'Enter') saveProfileName.click();
 });
-function showItemHoverTag(choice) {
-  if (!choice || plantMenu.hidden) return;
-  const label = choice.getAttribute('aria-label') || choice.querySelector('img')?.alt;
-  if (!label) return;
-  itemHoverTag.textContent = label;
-  itemHoverTag.hidden = false;
-  const rect = choice.getBoundingClientRect();
+function positionItemHoverTag(rect) {
   const tag = itemHoverTag.getBoundingClientRect();
   const left = THREE.MathUtils.clamp(rect.left + (rect.width - tag.width) / 2, 8, window.innerWidth - tag.width - 8);
   const above = rect.top - tag.height - 7;
   const top = above >= 8 ? above : Math.min(window.innerHeight - tag.height - 8, rect.bottom + 7);
   itemHoverTag.style.transform = `translate(${left}px, ${top}px)`;
 }
+
+function showItemHoverTag(choice) {
+  if (!choice || plantMenu.hidden) return;
+  const label = choice.getAttribute('aria-label') || choice.querySelector('img')?.alt;
+  if (!label) return;
+  itemHoverTag.textContent = label;
+  itemHoverTag.hidden = false;
+  positionItemHoverTag(choice.getBoundingClientRect());
+}
+
+let musicPointerHover = false;
+let musicKeyboardFocus = false;
+function updateMusicHoverTag() {
+  if (musicPointerHover || musicKeyboardFocus) {
+    itemHoverTag.textContent = '“Beautiful Day” by Purrple Cat';
+    itemHoverTag.hidden = false;
+    positionItemHoverTag(musicToggle.getBoundingClientRect());
+  } else {
+    itemHoverTag.hidden = true;
+  }
+}
+musicToggle.addEventListener('pointerenter', () => { musicPointerHover = true; updateMusicHoverTag(); });
+musicToggle.addEventListener('pointerleave', () => { musicPointerHover = false; updateMusicHoverTag(); });
+musicToggle.addEventListener('focus', () => { musicKeyboardFocus = true; updateMusicHoverTag(); });
+musicToggle.addEventListener('blur', () => { musicKeyboardFocus = false; updateMusicHoverTag(); });
 
 function startPlantStagePreview(choice) {
   const plantId = choice?.dataset.previewPlant;

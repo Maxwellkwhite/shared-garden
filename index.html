@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" sizes="256x256" href="./assets/common-garden-icon.png?v=20261116-pixel-pine-logo-transparent-v2">
   <title>The Common Garden</title>
   <script async src="https://www.rilld.com/static/js/tracker.js?v=16" data-site-key="rKyZ8X_Hsom-ZXEPzQKg2sceu1lATpZo"></script>
-  <link rel="stylesheet" href="./style.css?v=20261116-profile-setting-removed">
+  <link rel="stylesheet" href="./style.css?v=20261117-help-guide-v5">
   <script type="importmap">
     {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"}}
   </script>
@@ -37,7 +37,27 @@
         </button>
         <span class="change-allowance" id="changeAllowance" role="status" aria-live="off" tabindex="0" aria-label="Hourly garden changes remaining">50</span>
       </div>
+      <button class="music-toggle" id="musicToggle" type="button" aria-label="Play garden music" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 18V5l10-2v13M10 8l10-2"></path><circle cx="7" cy="18" r="2.5"></circle><circle cx="17" cy="16" r="2.5"></circle><path class="music-off-slash" d="M3 3l18 18"></path></svg>
+      </button>
+      <button class="help-toggle" id="helpToggle" type="button" aria-label="Open garden guide and help" aria-expanded="false" aria-controls="helpPanel" title="Garden guide and help">?</button>
     </div>
+    <dialog class="help-panel" id="helpPanel" aria-labelledby="helpTitle">
+      <header class="help-header">
+        <div><span class="help-eyebrow">THE COMMON GARDEN</span><h1 id="helpTitle">Garden guide</h1><p>Search tips and learn how everything works.</p></div>
+        <button class="help-close" id="closeHelp" type="button" aria-label="Close garden guide">×</button>
+      </header>
+      <label class="help-search-label" for="helpSearch">Search the guide</label>
+      <input class="help-search" id="helpSearch" type="search" placeholder="Try “growth”, “locks”, or “zoom”" autocomplete="off">
+      <nav class="help-categories" id="helpCategories" aria-label="Guide categories"></nav>
+      <div class="help-layout">
+        <section class="help-topic-column" aria-label="Matching guides">
+          <div class="help-result-count" id="helpResultCount" aria-live="polite"></div>
+          <div class="help-topics" id="helpTopics"></div>
+        </section>
+        <article class="help-article" id="helpArticle" aria-live="polite"></article>
+      </div>
+    </dialog>
     <section class="profile-panel" id="profilePanel" aria-label="Your garden profile" hidden>
       <label for="profileName">Your garden name</label>
       <p>Your name will appear on the things you add.</p>
@@ -76,6 +96,6 @@
     </div>
     <div class="item-hover-tag" id="itemHoverTag" role="tooltip" hidden></div>
   </main>
-  <script type="module" src="./garden.js?v=20261116-four-stage-only-v1"></script>
+  <script type="module" src="./garden.js?v=20261117-help-guide-v5"></script>
 </body>
 </html>

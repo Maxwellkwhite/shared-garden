@@ -5,11 +5,8 @@ Use this file to track work for the shared garden prototype.
 ## To do
 
 - tutorial
-- guides and help
 - add better search/categories
-- cozy music
 - cooler grid animation/placing animation
-- fix objects
 - growth using watering animation
 - Avatars	Visitors walk around as characters
 - Wildlife	Butterflies, bees, birds, and small animals

@@ -4,7 +4,7 @@ const TREE_ASSETS = [
 ];
 const DETAIL_ASSETS = ['small-rock', 'mossy-rock', 'fallen-log', 'tree-stump'];
 const objectAssets = new Set(DETAIL_ASSETS);
-const SPRITE_CACHE_VERSION = '20261116-four-stage-only-v1';
+const SPRITE_CACHE_VERSION = '20261117-pine-mature-v2';
 
 function hash(seed, ...values) {
   let h = seed >>> 0;

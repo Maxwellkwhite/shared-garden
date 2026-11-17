@@ -477,7 +477,7 @@ class Handler(SimpleHTTPRequestHandler):
 
     def end_headers(self) -> None:
         request_path = urlparse(self.path).path
-        if request_path.startswith("/assets/") and request_path.endswith(".webp"):
+        if request_path.startswith("/assets/") and request_path.endswith((".webp", ".mp3")):
             self.send_header("Cache-Control", "public, max-age=31536000, immutable")
         else:
             self.send_header("Cache-Control", "no-store, max-age=0")
